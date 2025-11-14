@@ -2,9 +2,9 @@
 
 # Unofficial Implementation of *Whole Slide Imaging System Using Deep Learning-Based Automated Focusing*
 
-**Repository Name**: *wsiautofocus*
+**Repository Name**: *wsi_autofocus*
 **Authors**: Tristan Cotte
-**License**: MIT (or whatever you choose)
+**License**: MIT 
 **Based on Paper**:
 
 > Dastidar T. R., Ethirajan R. (2019) *Whole Slide Imaging System Using Deep Learning-Based Automated Focusing.* Biomedical Optics Express 11(1): 480-491. ([PMC][1])
@@ -239,10 +239,5 @@ Your results may vary depending on data, objective, and hardware.
 ---
 
 If you have any questions, issues or suggestions — feel free to open an issue or submit a pull request.
-Happy scanning!
-
----
-
-**End of README**
 
 [1]: https://pmc.ncbi.nlm.nih.gov/articles/PMC6968754/?utm_source=chatgpt.com "Whole slide imaging system using deep learning-based automated focusing - PMC"
