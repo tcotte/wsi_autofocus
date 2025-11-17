@@ -181,8 +181,8 @@ This computation can be done using the command below:
     --train_set "<root_dataset>/X/train" \
     --test_set "<root_dataset>/X/test" \
     --run_name "<run_name>" \
-    --epochs 100 \
-    --batch-size 128 
+    --epoch 100 \
+    --bs 128 
    ```
 5. Evaluate:
 

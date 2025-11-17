@@ -10,7 +10,7 @@ from torchvision.transforms import transforms
 
 class DifferenceAFDataset(Dataset):
     def __init__(self, df: pd.DataFrame, image_folder: str, kernel_size: int = 3, transform=None,
-                 one_channel_image: bool = False):
+                 one_channel_image: bool = False, normalize_output: bool = False):
         self._image_folder = image_folder
 
         self._df = df
@@ -21,11 +21,22 @@ class DifferenceAFDataset(Dataset):
 
         self._one_channel_image = one_channel_image
 
+        self._normalize_output = normalize_output
+        if self._normalize_output:
+            self._max_defocus_z_position = self.get_max_defocus()
+
+    def get_max_defocus(self) -> float:
+        """
+        We reckon here that the 0 position is centered in the interval [min_pos; max_pos]
+        :return:
+        """
+        return max(np.abs(self._df['z2_diff_focus'].min()), self._df['z2_diff_focus'].max())
+
     @classmethod
     def from_excel(cls, excel_filepath: str, image_folder: str, kernel_size: int = 3, transform=None,
-                   one_channel_image: bool = False):
+                   one_channel_image: bool = False, normalize_output: bool = False):
         return cls(df=pd.read_excel(excel_filepath), image_folder=image_folder, kernel_size=kernel_size,
-                   transform=transform, one_channel_image=one_channel_image)
+                   transform=transform, one_channel_image=one_channel_image, normalize_output=normalize_output)
 
     def __len__(self) -> int:
         return len(self._df)
@@ -51,6 +62,8 @@ class DifferenceAFDataset(Dataset):
         blurred_difference_image = np.float32(cv2.medianBlur(difference_image, self._kernel_size))
 
         y = float(item['z2_diff_focus'])
+        if self._normalize_output:
+            y /= self._max_defocus_z_position
 
         norm_image = self.normalize_standard_channelwise(img_np=blurred_difference_image)
 

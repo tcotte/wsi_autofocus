@@ -35,6 +35,8 @@ def train(train_dataloader, test_dataloader, train_dataset, test_dataset, model,
     nb_train_batch = int(np.ceil(len(train_dataset) / args.batch_size))
     nb_test_batch = int(np.ceil(len(test_dataset) / args.batch_size))
 
+    sample_weights_loss = True if isinstance(criterion, SampleWeightsLoss) else False
+
     mse_func = nn.L1Loss(reduction="sum")
 
     model.to(device)
@@ -67,7 +69,12 @@ def train(train_dataloader, test_dataloader, train_dataset, test_dataset, model,
                 optimizer.zero_grad()
 
                 outputs = model(images)
-                train_loss = criterion(outputs.squeeze(), labels)
+                if not sample_weights_loss:
+                    train_loss = criterion(outputs.squeeze(), labels)
+
+                else:
+                    train_loss = criterion(outputs.squeeze(), labels, std)
+
                 train_loss.backward()
                 optimizer.step()
 
@@ -80,6 +87,7 @@ def train(train_dataloader, test_dataloader, train_dataset, test_dataset, model,
         with torch.no_grad():
             for data in test_dataloader:
                 images, labels = data["X"].float(), data["y"]
+                std = data["std"].float().to(device)
 
                 images = images.to(device)
                 labels = labels.to(device)
@@ -87,7 +95,12 @@ def train(train_dataloader, test_dataloader, train_dataset, test_dataset, model,
                 outputs = model(images)
 
                 test_mae += mse_func(outputs.squeeze(), labels)
-                test_loss = criterion(outputs.squeeze(), labels)
+
+                if not sample_weights_loss:
+                    test_loss = criterion(outputs.squeeze(), labels)
+
+                else:
+                    test_loss = criterion(outputs.squeeze(), labels, std)
 
                 test_running_loss += test_loss.item()
 
@@ -142,10 +155,16 @@ def main(args):
     train_path = args.train_set
     test_path = args.test_set
 
-    train_dataset = DifferenceAFDataset.from_excel(excel_filepath=os.path.join(train_path, 'train.xlsx'),
-                                                   image_folder=train_path, transform=train_transform)
-    test_dataset = DifferenceAFDataset.from_excel(excel_filepath=os.path.join(test_path, 'test.xlsx'),
-                                                  image_folder=test_path, transform=test_transform)
+    train_dataset = DifferenceAFDataset.from_excel(
+        excel_filepath=os.path.join(os.path.dirname(os.path.dirname(train_path)), 'y', 'train.xlsx'),
+        image_folder=train_path,
+        transform=train_transform,
+        normalize_output=args.normalize_output)
+
+    test_dataset = DifferenceAFDataset.from_excel(
+        excel_filepath=os.path.join(os.path.dirname(os.path.dirname(test_path)), 'y', 'test.xlsx'),
+        image_folder=test_path,
+        transform=test_transform)
 
     # Dataloaders
     if get_os().lower() == "windows":

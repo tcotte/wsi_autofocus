@@ -37,3 +37,13 @@ class SampleWeightsLoss(nn.Module):
 
         loss = numerator / denominator
         return loss
+
+if __name__ == '__main__':
+    bs = 128
+    input = torch.randn(bs, 1)
+    target = torch.randn(bs, 1)
+    std = torch.randn(bs, 1)
+
+    loss = SampleWeightsLoss()
+    loss = loss(input, target, std)
+    print(loss)

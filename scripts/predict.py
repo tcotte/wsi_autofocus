@@ -104,7 +104,7 @@ def main(args):
         plt.savefig(save_path)
         plt.close(fig)
 
-        print(f"Saved plot: {save_path}")
+        print(f"Saved plot: {save_path} -> RMSE: {error:.2f}")
 
 
 if __name__ == "__main__":
@@ -136,7 +136,7 @@ if __name__ == "__main__":
     parser.add_argument(
         "--output_folder",
         type=str,
-        default="autofocus/output",
+        default="../output",
         help="Folder to save output prediction plots"
     )
 
