@@ -38,6 +38,12 @@ class DifferenceAFDataset(Dataset):
         return cls(df=pd.read_excel(excel_filepath), image_folder=image_folder, kernel_size=kernel_size,
                    transform=transform, one_channel_image=one_channel_image, normalize_output=normalize_output)
 
+    @classmethod
+    def from_csv(cls, excel_filepath: str, image_folder: str, kernel_size: int = 3, transform=None,
+                   one_channel_image: bool = False, normalize_output: bool = False):
+        return cls(df=pd.read_csv(excel_filepath), image_folder=image_folder, kernel_size=kernel_size,
+                   transform=transform, one_channel_image=one_channel_image, normalize_output=normalize_output)
+
     def __len__(self) -> int:
         return len(self._df)
 

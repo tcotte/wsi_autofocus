@@ -1,12 +1,8 @@
 import os
-from typing import Union, List
 
 import numpy as np
 import torch
-
 import wandb
-
-from scripts.model import RegressionMobilenet
 
 
 class WeightandBiaises:

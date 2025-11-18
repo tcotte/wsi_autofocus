@@ -35,6 +35,8 @@ def train(train_dataloader, test_dataloader, train_dataset, test_dataset, model,
     nb_train_batch = int(np.ceil(len(train_dataset) / args.batch_size))
     nb_test_batch = int(np.ceil(len(test_dataset) / args.batch_size))
 
+    max_z_value = train_dataset.get_max_defocus()
+
     sample_weights_loss = True if isinstance(criterion, SampleWeightsLoss) else False
 
     mse_func = nn.L1Loss(reduction="sum")
@@ -155,16 +157,17 @@ def main(args):
     train_path = args.train_set
     test_path = args.test_set
 
-    train_dataset = DifferenceAFDataset.from_excel(
-        excel_filepath=os.path.join(os.path.dirname(os.path.dirname(train_path)), 'y', 'train.xlsx'),
+    train_dataset = DifferenceAFDataset.from_csv(
+        excel_filepath=os.path.join(os.path.dirname(os.path.dirname(train_path)), 'y', 'train.csv'),
         image_folder=train_path,
         transform=train_transform,
         normalize_output=args.normalize_output)
 
-    test_dataset = DifferenceAFDataset.from_excel(
-        excel_filepath=os.path.join(os.path.dirname(os.path.dirname(test_path)), 'y', 'test.xlsx'),
+    test_dataset = DifferenceAFDataset.from_csv(
+        excel_filepath=os.path.join(os.path.dirname(os.path.dirname(test_path)), 'y', 'test.csv'),
         image_folder=test_path,
-        transform=test_transform)
+        transform=test_transform,
+        normalize_output=args.normalize_output)
 
     # Dataloaders
     if get_os().lower() == "windows":

@@ -82,7 +82,7 @@ def create_label_file(set_folder: str, set_name: str, delta: float, output_folde
     print(f'pairs found: {pair_found} with a stack of {len(list_distances)} items')
 
 
-    df.to_csv(os.path.join(output_folder, f'{set_name}.xlsx'))
+    df.to_csv(os.path.join(output_folder, f'{set_name}.csv'))
 
 
 def main(args: argparse.Namespace) -> None:
